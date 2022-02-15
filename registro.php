@@ -50,14 +50,21 @@ switch($metodo){
         }
         break;
     case 'PUT':
-        if (isset($_GET['id']) && isset($_GET['user']) && $_GET['sensor'] && isset($_GET['valor']) && isset($_GET['fecha'])){
+        if (isset($_GET['id'])){
+            $sql = "UPDATE registro SET ";
+            (isset($_GET['user'])) ? $sql .= "user = :u, " : null;
+            (isset($_GET['sensor'])) ? $sql .= "sensor = :s, " : null;
+            (isset($_GET['valor'])) ? $sql .= "valor = :v, " : null;
+            (isset($_GET['fecha'])) ? $sql .= "fecha = :f, " : null;
+            $sql = substr($sql, 0, -2);
+            $sql .= " WHERE id = :id";
             $c = conexion();
-            $s = $c->prepare("UPDATE registro SET user = :u, sensor = :s, valor = :v, fecha = :fecha WHERE id = :id");
-            $s-> bindValue (":u", $GET['user']);
-            $s-> bindValue (":s", $GET['sensor']);
-            $s-> bindValue (":v", $GET['valor']);
-            $s-> bindValue (":f", $GET['fecha']);
-            $s-> bindValue (":id", $GET['id']);
+            $s = $c->prepare($sql);
+            (isset($_GET['user'])) ? $s-> bindValue (":u", $_GET['user']) : null;
+            (isset($_GET['sensor'])) ? $s-> bindValue (":s", $_GET['sensor']) : null;
+            (isset($_GET['valor'])) ? $s-> bindValue (":v", $_GET['valor']) : null;
+            (isset($_GET['fecha'])) ? $s-> bindValue (":f", $_GET['fecha']) : null;
+            (isset($_GET['id'])) ? $s-> bindValue (":id", $_GET['id']) : null;
             $s->execute();
             if($s->rowCount() > 0){
                 header("http/1.1 200 Ok");
