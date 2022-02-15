@@ -50,8 +50,44 @@ switch($metodo){
         }
         break;
     case 'PUT':
+        if (isset($_GET['id']) && isset($_GET['user']) && $_GET['sensor'] && isset($_GET['valor']) && isset($_GET['fecha'])){
+            $c = conexion();
+            $s = $c->prepare("UPDATE registro SET user = :u, sensor = :s, valor = :v, fecha = :fecha WHERE id = :id");
+            $s-> bindValue (":u", $GET['user']);
+            $s-> bindValue (":s", $GET['sensor']);
+            $s-> bindValue (":v", $GET['valor']);
+            $s-> bindValue (":f", $GET['fecha']);
+            $s-> bindValue (":id", $GET['id']);
+            $s->execute();
+            if($s->rowCount() > 0){
+                header("http/1.1 200 Ok");
+                echo json_encode(array("updated" => "y"));
+            }else{
+                header("http/1.1 400 Bad request");
+                echo json_encode(array("updated" => "n"));
+            }
+        }else {
+            header("http/1.1 400 Bad request");
+            echo "Faltan datos";
+        }
         break;
     case 'DELETE':
+        if (isset($_GET['id'])){
+            $c = conexion();  
+            $s = $c->prepare("DELETE FROM registro WHERE id = :id");
+            $s->bindValue("id", $_GET['id']);
+            $s->execute();
+            if($s->rowCount() > 0){
+                header("http/1.1 200 Ok");
+                echo json_encode(array("delete" => "y"));
+            }else{
+                header("http/1.1 400 bad request");
+                echo json_encode(array("delete" => "n"));
+            }
+        }else{
+            header("http/1.1 400 bad request");
+            echo "Faltan datos";
+        }
         break;
     default:
 
